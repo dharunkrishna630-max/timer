@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Countdown Timer ⏰ | Dharun’s Event Timer</title>
+  <style>
+    /* ---------- General Page Styling ---------- */
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #acb6e5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #2d3436;
+      text-align: center;
+    }
+
+    h1 {
+      color: #2d3436;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 15px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .timer-container {
+      background: #ffffffcc;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #74b9ff;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #0984e3;
+    }
+
+    button {
+      width: 48%;
+      padding: 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+      transition: all 0.3s ease;
+      color: white;
+    }
+
+    #start-btn {
+      background-color: #00b894;
+    }
+    #start-btn:hover {
+      background-color: #019875;
+    }
+
+    #reset-btn {
+      background-color: #d63031;
+    }
+    #reset-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 25px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .countdown div {
+      background-color: #74b9ff;
+      color: white;
+      border-radius: 10px;
+      padding: 15px;
+      min-width: 70px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+    }
+
+    .countdown div:hover {
+      transform: scale(1.1);
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #2d3436;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .countdown {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown Timer ⏰</h1>
+  <div class="timer-container">
+    <label for="datetime">Select a future date and time:</label>
+    <input type="datetime-local" id="datetime" />
+
+    <div>
+      <button id="start-btn">Start</button>
+      <button id="reset-btn">Reset</button>
+    </div>
+
+    <div class="countdown" id="countdown">
+      <div><span id="days">00</span><br>Days</div>
+      <div><span id="hours">00</span><br>Hours</div>
+      <div><span id="minutes">00</span><br>Minutes</div>
+      <div><span id="seconds">00</span><br>Seconds</div>
+    </div>
+  </div>
+
+  <footer>© 2025 Countdown Timer | Made with 💙 by Dharun Krishna</footer>
+
+  <script>
+    let countdownInterval;
+
+    const startBtn = document.getElementById("start-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const datetimeInput = document.getElementById("datetime");
+
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+
+    function startCountdown() {
+      const selectedDate = new Date(datetimeInput.value);
+      if (!datetimeInput.value || selectedDate <= new Date()) {
+        alert("Please select a valid future date and time.");
+        return;
+      }
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = selectedDate - now;
+
+        if (distance <= 0) {
+          clearInterval(countdownInterval);
+          alert("🎉 The event time has arrived!");
+          updateDisplay(0, 0, 0, 0);
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        updateDisplay(days, hours, minutes, seconds);
+      }, 1000);
+    }
+
+    function updateDisplay(days, hours, minutes, seconds) {
+      daysEl.textContent = String(days).padStart(2, "0");
+      hoursEl.textContent = String(hours).padStart(2, "0");
+      minutesEl.textContent = String(minutes).padStart(2, "0");
+      secondsEl.textContent = String(seconds).padStart(2, "0");
+    }
+
+    function resetCountdown() {
+      clearInterval(countdownInterval);
+      datetimeInput.value = "";
+      updateDisplay(0, 0, 0, 0);
+    }
+
+    startBtn.addEventListener("click", startCountdown);
+    resetBtn.addEventListener("click", resetCountdown);
+  </script>
+</body>
+</html>
+
